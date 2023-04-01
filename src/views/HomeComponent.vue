@@ -1,36 +1,36 @@
 <template>
     <div class="container">
-        <div id="alert" class="alert d-none alert-success alert-dismissible fade show" role="alert">
-            Your message was sent successfully!
+        <div id="alert" ref="alert" class="alert d-none alert-success alert-dismissible fade show" role="alert">
+            {{ TextConstants.ALERT_SUCCESS }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         <div class="loader" v-if="loading">
             <div class="spinner-border text-primary" role="status">
-                <span class="sr-only">Loading...</span>
+                <span class="sr-only">{{ TextConstants.LOADING }}</span>
             </div>
         </div>
         <div v-else>
             <div class="d-flex justify-content-end">
                 <button v-if="devices.previous_page" type="button" class="btn btn-primary m-1"
-                        @click="fetchData(devices.page_number - 1, true)">Previous Page
+                        @click="fetchData(devices.page_number - 1, true)">{{ TextConstants.PREVIOUS_PAGE }}
                 </button>
                 <button v-if="devices.next_page" type="button" class="btn btn-primary m-1"
-                        @click="fetchData(devices.page_number + 1, true)">Next Page
+                        @click="fetchData(devices.page_number + 1, true)">{{ TextConstants.NEXT_PAGE }}
                 </button>
             </div>
-            <div style="height: 30vh" class="table-responsive">
+            <div class="table-responsive device-table-height">
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>Device ID</th>
-                        <th>Display Name</th>
-                        <th>Active State</th>
-                        <th>Online</th>
-                        <th>Latitude</th>
-                        <th>Longitude</th>
-                        <th>Altitude</th>
-                        <th>Drive Status</th>
-                        <th>Icon</th>
+                        <th>{{ TextConstants.DEVICE_ID }}</th>
+                        <th>{{ TextConstants.DISPLAY_NAME }}</th>
+                        <th>{{ TextConstants.ACTIVE_STATE }}</th>
+                        <th>{{ TextConstants.ONLINE }}</th>
+                        <th>{{ TextConstants.LATITUDE }}</th>
+                        <th>{{ TextConstants.LONGITUDE }}</th>
+                        <th>{{ TextConstants.ALTITUDE }}</th>
+                        <th>{{ TextConstants.DRIVE_STATUS }}</th>
+                        <th>{{ TextConstants.ICON }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -47,32 +47,56 @@
                         <td>{{ device.latest_accurate_device_point.lng }}</td>
                         <td>{{ device.latest_accurate_device_point.altitude }}</td>
                         <td>{{ device.latest_accurate_device_point.device_state.drive_status }}</td>
-                        <td><img style="width: 20px" :src="serverPath+device.image" :alt="device.image"></td>
+                        <td><img class="device-icon" :src="serverPath+device.image" :alt="device.image"></td>
                     </tr>
                     </tbody>
                 </table>
             </div>
             <br/>
-            <GoogleMap :api-key="apiKey" style="width: 100%; height: 500px" :center="{ lat: 37.0902, lng: -95.7129 }" :zoom="4">
-                <Marker v-for="device in devices.devices" :key="device.device_id" :options="{ position: { lat: device.latest_accurate_device_point.lat, lng: device.latest_accurate_device_point.lng }, icon:  {url: serverPath+device.image, scaledSize: {height: 20, width: 20}}}" />
+            <GoogleMap :api-key="apiKey" class="map" :center="{ lat: 37.0902, lng: -95.7129 }"
+                       :zoom="4">
+                <Marker v-for="device in devices.devices" :key="device.device_id"
+                        :options="{ position: { lat: device.latest_accurate_device_point.lat, lng: device.latest_accurate_device_point.lng }, icon:  {url: serverPath+device.image, scaledSize: {height: 20, width: 20}}}"/>
             </GoogleMap>
         </div>
     </div>
 </template>
-<style>
+<style scoped>
 .loader {
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
+.device-table-height {
+    height: 30vh;
+}
+
+.device-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.map {
+    width: 100%;
+    height: 500px
+}
 </style>
 
 <script>
 import axios from "axios";
-import { GoogleMap, Marker } from "vue3-google-map";
+import {GoogleMap, Marker} from "vue3-google-map";
 import URLConstants from "@/constants/URLConstants";
+import {showAlertMessage} from "@/util/commons";
+import TextConstants from "../constants/TextConstants";
+
 export default {
     name: 'HomeComponent',
+    computed: {
+        TextConstants() {
+            return TextConstants
+        }
+    },
     components: {GoogleMap, Marker},
     data() {
         return {
@@ -80,46 +104,36 @@ export default {
             devices: {},
             serverPath: process.env.VUE_APP_SERVER_URL,
             apiKey: process.env.VUE_APP_GOOGLE_API_KEY,
+            intervalId: null,
         }
     },
     mounted() {
         this.fetchData(1, true);
-        setInterval(() => {
+        this.intervalId = setInterval(() => {
             this.fetchData(this.devices.page_number ? this.devices.page_number : 1, false);
-        }, 50000);
+        }, 10000);
+    },
+    beforeUnmount() {
+        clearInterval(this.intervalId);
     },
 
     methods: {
         fetchData(page, enableLoading) {
-            if(enableLoading) {
+            if (enableLoading) {
                 this.loading = true
             }
             axios.get(URLConstants.DEVICES_URL + page)
                 .then(response => {
-                    if(enableLoading) {
+                    if (enableLoading) {
                         this.loading = false
                     }
                     this.devices = response.data;
                 }).catch(err => {
-                if(enableLoading) {
+                if (enableLoading) {
                     this.loading = false
                 }
-                this.showAlertMessage("danger", err)
+                showAlertMessage("danger", err, this.$refs.alert)
             })
-        },
-        showAlertMessage(type, message) {
-            if (type === "success") {
-                document.getElementById("alert").classList.remove("alert-danger")
-                document.getElementById("alert").classList.add("alert-success")
-            } else {
-                document.getElementById("alert").classList.add("alert-danger")
-                document.getElementById("alert").classList.remove("alert-success")
-            }
-            document.getElementById("alert").classList.remove("d-none")
-            document.getElementById("alert").innerText = message;
-            setTimeout(() => {
-                document.getElementById("alert").classList.add("d-none")
-            }, 2000);
         },
     }
 }

@@ -1,54 +1,54 @@
 <template>
     <div class="container">
-        <div id="alert" class="alert d-none alert-success alert-dismissible fade show" role="alert">
-            Your message was sent successfully!
+        <div id="alert" ref="alert" class="alert d-none alert-success alert-dismissible fade show" role="alert">
+            {{ TextConstants.ALERT_SUCCESS }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <h1>Preferences</h1>
+        <h1>{{ TextConstants.PREFERENCES }}</h1>
         <hr/>
         <div class="loader" v-if="loading">
             <div class="spinner-border text-primary" role="status">
-                <span class="sr-only">Loading...</span>
+                <span class="sr-only">{{ TextConstants.LOADING }}</span>
             </div>
         </div>
         <form v-else>
             <div class="mb-3 row">
                 <label class="col-sm-2 col-form-label">
-                    Sort Column</label>
+                    {{ TextConstants.SORT_COLUMN }}</label>
                 <div class="col-sm-10">
                     <select v-model="preferences.sort_column" class="form-select">
-                        <option value="display_name">Display Name</option>
-                        <option value="device_id">Device ID</option>
-                        <option value="active_state">Active State</option>
-                        <option value="online">Online</option>
-                        <option value="lat">Latitude</option>
-                        <option value="lng">Longitude</option>
-                        <option value="altitude">Altitude</option>
-                        <option value="drive_status">Drive Status</option>
+                        <option value="display_name">{{ TextConstants.DISPLAY_NAME }}</option>
+                        <option value="device_id">{{ TextConstants.DEVICE_ID }}</option>
+                        <option value="active_state">{{ TextConstants.ACTIVE_STATE }}</option>
+                        <option value="online">{{ TextConstants.ONLINE }}</option>
+                        <option value="lat">{{ TextConstants.LATITUDE }}</option>
+                        <option value="lng">{{ TextConstants.LONGITUDE }}</option>
+                        <option value="altitude">{{ TextConstants.ALTITUDE }}</option>
+                        <option value="drive_status">{{ TextConstants.DRIVE_STATUS }}</option>
                     </select>
                 </div>
             </div>
             <div class="mb-3 row">
-                <label class="col-form-label col-sm-2 pt-0">Sort Order</label>
+                <label class="col-form-label col-sm-2 pt-0">{{ TextConstants.SORT_ORDER }}</label>
                 <div class="col-sm-10">
                     <div class="form-check">
                         <input v-model="sortedOrder" class="form-check-input" type="radio"
                                name="gridRadios" id="r1" value="true">
                         <label class="form-check-label" for="r1">
-                            Ascending
+                            {{ TextConstants.ASCENDING }}
                         </label>
                     </div>
                     <div class="form-check">
                         <input v-model="sortedOrder" class="form-check-input" type="radio"
                                name="gridRadios" id="r2" value="false">
                         <label class="form-check-label" for="r2">
-                            Descending
+                            {{ TextConstants.DESCENDING }}
                         </label>
                     </div>
                 </div>
             </div>
             <div class="mb-3 row">
-                <label class="col-form-label col-sm-2 pt-0">Number of Rows</label>
+                <label class="col-form-label col-sm-2 pt-0">{{ TextConstants.NUMBER_OF_ROWS }}</label>
                 <div class="col-sm-10">
                     <select v-model="numberOfRows" class="form-select">
                         <option value="-1">All</option>
@@ -60,19 +60,19 @@
                     </select>
                 </div>
             </div>
-            <label class="col-form-label col-sm-2 pt-0 fw-bold">Edit Device Preferences</label>
-            <div style="height: 30vh" class="table-responsive">
+            <label class="col-form-label col-sm-2 pt-0 fw-bold">{{ TextConstants.EDIT_DEVICE_PREFERENCES }}</label>
+            <div class="table-responsive devices-table">
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>Device ID</th>
-                        <th style="display: flex; align-items: center">
-                            <span>Display Name </span>
-                            <input type="text" style="width: 50%" class="form-control ms-2" v-model="searchTerm"
-                                   placeholder="Search...">
+                        <th>{{ TextConstants.DEVICE_ID }}</th>
+                        <th class="display-name">
+                            <span>{{ TextConstants.DISPLAY_NAME }} </span>
+                            <input type="text" class="form-control ms-2 search-term" v-model="searchTerm"
+                                   :placeholder="TextConstants.SEARCH">
                         </th>
-                        <th>Hidden</th>
-                        <th>Icon</th>
+                        <th>{{ TextConstants.HIDDEN }}</th>
+                        <th>{{ TextConstants.ICON }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -82,35 +82,58 @@
                         <td>
                             <input v-model="device.hidden" class="form-check-input" type="checkbox">
                         </td>
-                        <td style="width: 25%;" v-if="!device.editing">
-                            <img style="width: 20px" :src="serverPath+device.image" :alt="device.image">
-                            <button @click="setEditMode(device)">Edit</button>
+                        <td class="device-icon" v-if="!device.editing">
+                            <img :src="serverPath+device.image" :alt="device.image">
+                            <button @click="setEditMode(device)">{{ TextConstants.EDIT }}</button>
                         </td>
-                        <td style="width: 25%;" v-else>
+                        <td class="device-icon" v-else>
                             <input type="file" ref="fileInput" @change="handleFileUpload(device)"/>
-                            <button @click.prevent="saveFile(device)">Save</button>
+                            <button @click.prevent="saveFile(device)">{{ TextConstants.SAVE }}</button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
             <br/>
-            <button v-on:click="save" type="button" class="btn btn-primary">Save</button>
+            <button v-on:click="save" type="button" class="btn btn-primary">{{ TextConstants.SAVE }}</button>
         </form>
     </div>
 </template>
 
-<style>
+<style scoped>
 .loader {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.devices-table {
+    height: 30vh;
+}
+
+.display-name {
+    display: flex;
+    align-items: center
+}
+
+.search-term {
+    width: 50%;
+}
+
+.device-icon {
+    width: 25%;
+}
+
+.device-icon img {
+    width: 20px;
 }
 </style>
 
 <script>
 import axios from "axios";
 import URLConstants from "@/constants/URLConstants";
+import {showAlertMessage} from "@/util/commons";
+import TextConstants from "../constants/TextConstants";
 
 export default {
     name: 'PreferencesComponent',
@@ -125,6 +148,9 @@ export default {
         }
     },
     computed: {
+        TextConstants() {
+            return TextConstants
+        },
         filteredDevices() {
             if (this.preferences.device_preferences !== undefined)
                 return this.preferences.device_preferences.filter(devicePreference => {
@@ -158,31 +184,17 @@ export default {
                     this.preferences = response.data
                 }).catch(error => {
                 this.loading = false
-                this.showAlertMessage("danger", error)
+                showAlertMessage("danger", error, this.$refs.alert)
             })
         },
         save() {
-            axios.post(URLConstants.DEVICES_URL, "data=" + JSON.stringify(this.preferences)).then(response => {
+            axios.post(URLConstants.PREFERENCES_URL, "data=" + JSON.stringify(this.preferences)).then(response => {
                 if (response.status === 200) {
-                    this.showAlertMessage("success", response.data.message)
+                    showAlertMessage("success", response.data.message, this.$refs.alert)
                 }
             }).catch(error => {
-                this.showAlertMessage("danger", error)
+                showAlertMessage("danger", error, this.$refs.alert)
             })
-        },
-        showAlertMessage(type, message) {
-            if (type === "success") {
-                document.getElementById("alert").classList.remove("alert-danger")
-                document.getElementById("alert").classList.add("alert-success")
-            } else {
-                document.getElementById("alert").classList.add("alert-danger")
-                document.getElementById("alert").classList.remove("alert-success")
-            }
-            document.getElementById("alert").classList.remove("d-none")
-            document.getElementById("alert").innerText = message;
-            setTimeout(() => {
-                document.getElementById("alert").classList.add("d-none")
-            }, 2000);
         },
         setEditMode(device) {
             device.editing = true
@@ -191,7 +203,6 @@ export default {
             if (this.$refs.fileInput[0].files && this.$refs.fileInput[0].files.length > 0) {
                 device.file = this.$refs.fileInput[0].files[0]
             }
-
         },
         async saveFile(device) {
             if (device.file) {
