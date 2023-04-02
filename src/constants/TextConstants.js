@@ -23,4 +23,6 @@ export default {
     EDIT: "Edit",
     SAVE: "Save",
     SEARCH: "Search...",
+    RESET_ZOOM: "Reset Zoom",
+    CLICK_ROW_TEXT: "(Click row to locate device on map)"
 }
