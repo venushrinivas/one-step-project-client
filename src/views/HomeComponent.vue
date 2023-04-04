@@ -52,7 +52,7 @@
                         <td>{{ device.latest_accurate_device_point.lng }}</td>
                         <td>{{ device.latest_accurate_device_point.altitude }}</td>
                         <td>{{ device.latest_accurate_device_point.device_state.drive_status }}</td>
-                        <td><img class="device-icon" :src="serverPath+device.image" :alt="device.image"></td>
+                        <td><img class="device-icon" :src="getImageSource(device.image)" :alt="device.image"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -64,7 +64,7 @@
             <GoogleMap :api-key="apiKey" class="map" :center="center"
                        :zoom="zoom">
                 <Marker v-for="device in devices.devices" :key="device.device_id"
-                        :options="{ position: { lat: device.latest_accurate_device_point.lat, lng: device.latest_accurate_device_point.lng }, icon:  {url: serverPath+device.image, scaledSize: {height: 20, width: 20}}}"/>
+                        :options="{ position: { lat: device.latest_accurate_device_point.lat, lng: device.latest_accurate_device_point.lng }, icon:  {url: getImageSource(device.image), scaledSize: {height: 20, width: 20}}}"/>
             </GoogleMap>
         </div>
     </div>
@@ -95,7 +95,7 @@
 import axios from "axios";
 import {GoogleMap, Marker} from "vue3-google-map";
 import URLConstants from "@/constants/URLConstants";
-import {showAlertMessage} from "@/util/commons";
+import {getImageSource, serverPath, showAlertMessage} from "@/util/commons";
 import TextConstants from "../constants/TextConstants";
 
 export default {
@@ -110,7 +110,6 @@ export default {
         return {
             loading: false,
             devices: {},
-            serverPath: process.env.VUE_APP_SERVER_URL,
             apiKey: process.env.VUE_APP_GOOGLE_API_KEY,
             intervalId: null,
             center: {lat: 37.0902, lng: -95.7129},
@@ -129,6 +128,10 @@ export default {
     },
 
     methods: {
+        getImageSource,
+        serverPath() {
+            return serverPath
+        },
         fetchData(page, enableLoading) {
             if (enableLoading) {
                 this.loading = true

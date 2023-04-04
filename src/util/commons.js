@@ -1,3 +1,5 @@
+export const serverPath = process.env.VUE_APP_SERVER_URL
+
 export function showAlertMessage(type, message, ref) {
     if (type === "success") {
         ref.classList.remove("alert-danger")
@@ -11,4 +13,9 @@ export function showAlertMessage(type, message, ref) {
     setTimeout(() => {
         ref.classList.add("d-none")
     }, 2000);
+}
+
+export function getImageSource(imagePath) {
+    if (imagePath.indexOf("http") !== -1) return imagePath
+    else return serverPath + imagePath
 }

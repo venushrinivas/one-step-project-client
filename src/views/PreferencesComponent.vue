@@ -83,7 +83,7 @@
                             <input v-model="device.hidden" class="form-check-input" type="checkbox">
                         </td>
                         <td class="device-icon" v-if="!device.editing">
-                            <img :src="serverPath+device.image" :alt="device.image">
+                            <img :src="getImageSource(device.image)" :alt="device.image">
                             <button @click="setEditMode(device)">{{ TextConstants.EDIT }}</button>
                         </td>
                         <td class="device-icon" v-else>
@@ -132,7 +132,7 @@
 <script>
 import axios from "axios";
 import URLConstants from "@/constants/URLConstants";
-import {showAlertMessage} from "@/util/commons";
+import {getImageSource, showAlertMessage} from "@/util/commons";
 import TextConstants from "../constants/TextConstants";
 
 export default {
@@ -144,7 +144,6 @@ export default {
             loading: false,
             showAlert: false,
             searchTerm: '',
-            serverPath: process.env.VUE_APP_SERVER_URL
         }
     },
     computed: {
@@ -173,9 +172,10 @@ export default {
             set(value) {
                 this.preferences.ascending = value === "true";
             }
-        }
+        },
     },
     methods: {
+        getImageSource,
         fetchData() {
             this.loading = true
             axios.get(URLConstants.PREFERENCES_URL)
