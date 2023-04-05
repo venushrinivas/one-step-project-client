@@ -16,10 +16,10 @@
             </span>
                 <div>
                     <button v-if="devices.previous_page" type="button" class="btn btn-primary m-1"
-                            @click="fetchData(devices.page_number - 1, true)">{{ TextConstants.PREVIOUS_PAGE }}
+                            @click="navigatePage(devices.page_number - 1, true)">{{ TextConstants.PREVIOUS_PAGE }}
                     </button>
                     <button v-if="devices.next_page" type="button" class="btn btn-primary m-1"
-                            @click="fetchData(devices.page_number + 1, true)">{{ TextConstants.NEXT_PAGE }}
+                            @click="navigatePage(devices.page_number + 1, true)">{{ TextConstants.NEXT_PAGE }}
                     </button>
                 </div>
             </div>
@@ -95,7 +95,7 @@
 import axios from "axios";
 import {GoogleMap, Marker} from "vue3-google-map";
 import URLConstants from "@/constants/URLConstants";
-import {getImageSource, serverPath, showAlertMessage} from "@/util/commons";
+import {getImageSource, showAlertMessage} from "@/util/commons";
 import TextConstants from "../constants/TextConstants";
 
 export default {
@@ -129,8 +129,9 @@ export default {
 
     methods: {
         getImageSource,
-        serverPath() {
-            return serverPath
+        navigatePage(page, enableLoading) {
+            this.resetZoom()
+            return this.fetchData(page, enableLoading)
         },
         fetchData(page, enableLoading) {
             if (enableLoading) {
