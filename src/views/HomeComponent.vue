@@ -6,58 +6,8 @@
     </div>
     <div v-else class="container-fluid d-flex flex-column">
         <AlertComponent v-if="alert.show" :alert="alert" @close="alert.show = false"/>
-        <div class="d-flex justify-content-between">
-            <span class="d-flex align-items-center">
-                {{ TextConstants.CLICK_ROW_TEXT }}
-            </span>
-            <div>
-                <button v-if="devices.previous_page" type="button" class="btn btn-primary m-1"
-                        @click="navigatePage(devices.page_number - 1, true)">{{ TextConstants.PREVIOUS_PAGE }}
-                </button>
-                <button v-if="devices.next_page" type="button" class="btn btn-primary m-1"
-                        @click="navigatePage(devices.page_number + 1, true)">{{ TextConstants.NEXT_PAGE }}
-                </button>
-            </div>
-        </div>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>{{ TextConstants.DEVICE_ID }}</th>
-                    <th>{{ TextConstants.DISPLAY_NAME }}</th>
-                    <th>{{ TextConstants.ACTIVE_STATE }}</th>
-                    <th>{{ TextConstants.ONLINE }}</th>
-                    <th>{{ TextConstants.LATITUDE }}</th>
-                    <th>{{ TextConstants.LONGITUDE }}</th>
-                    <th>{{ TextConstants.ALTITUDE }}</th>
-                    <th>{{ TextConstants.DRIVE_STATUS }}</th>
-                    <th>{{ TextConstants.ICON }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="device in devices.devices" :key="device.device_id" @click="deviceRowClicked(device)">
-                    <td>{{ device.device_id }}</td>
-                    <td>{{ device.display_name }}</td>
-                    <td>
-                        {{ device.active_state }}
-                    </td>
-                    <td>
-                        {{ device.online }}
-                    </td>
-                    <td>{{ device.latest_accurate_device_point.lat }}</td>
-                    <td>{{ device.latest_accurate_device_point.lng }}</td>
-                    <td>{{ device.latest_accurate_device_point.altitude }}</td>
-                    <td>{{ device.latest_accurate_device_point.device_state.drive_status }}</td>
-                    <td><img class="device-icon" :src="getImageSource(device.image)" :alt="device.image"></td>
-                </tr>
-                </tbody>
-            </table>
-            <span v-if="!devices || !devices.devices || devices.devices.length === 0">
-                        <EmptyState :message="TextConstants.NO_DEVICE_AVAILABLE"/>
-                    </span>
-        </div>
+        <HomeTable v-model:tableData="tableData" :pagination="pagination" :deviceRowClicked="deviceRowClicked"/>
         <br/>
-
 
         <button v-if="reset" type="button" class="btn btn-primary m-1" @click="resetZoom">
             {{ TextConstants.RESET_ZOOM }}
@@ -67,8 +17,6 @@
             <Marker v-for="device in devices.devices" :key="device.device_id"
                     :options="{ position: { lat: device.latest_accurate_device_point.lat, lng: device.latest_accurate_device_point.lng }, icon:  {url: getImageSource(device.image), scaledSize: {height: 20, width: 20}}}"/>
         </GoogleMap>
-
-
     </div>
 </template>
 <style scoped>
@@ -76,11 +24,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.device-icon {
-    width: 20px;
-    height: 20px;
 }
 
 .map {
@@ -100,7 +43,7 @@ import URLConstants from "@/constants/URLConstants";
 import {getAlertObject, getImageSource} from "@/util/commons";
 import TextConstants from "../constants/TextConstants";
 import AlertComponent from "@/components/AlertComponent.vue";
-import EmptyState from "@/components/EmptyState.vue";
+import HomeTable from "@/components/HomeTable.vue";
 
 export default {
     name: 'HomeComponent',
@@ -109,11 +52,12 @@ export default {
             return TextConstants
         },
     },
-    components: {EmptyState, AlertComponent, GoogleMap, Marker},
+    components: {HomeTable, AlertComponent, GoogleMap, Marker},
     data() {
         return {
             loading: false,
             devices: {},
+            tableData:[],
             apiKey: process.env.VUE_APP_GOOGLE_API_KEY,
             intervalId: null,
             center: {lat: 37.0902, lng: -95.7129},
@@ -123,7 +67,15 @@ export default {
                 type: "",
                 message: "",
                 show: false
-            }
+            },
+            pagination: {
+                nextPage: false,
+                previousPage: false,
+                pageNumber: 1,
+                navigate: (pageNumber) => {
+                    this.navigatePage(pageNumber, true)
+                },
+            },
         }
     },
     mounted() {
@@ -152,6 +104,19 @@ export default {
                         this.loading = false
                     }
                     this.devices = response.data;
+                    this.tableData = [];
+                    this.pagination.nextPage = this.devices.next_page;
+                    this.pagination.previousPage = this.devices.previous_page;
+                    this.pagination.pageNumber = this.devices.page_number;
+                    for (let device of response.data.devices) {
+                        this.tableData.push({
+                            ...device,
+                            lat: device.latest_accurate_device_point.lat,
+                            lng: device.latest_accurate_device_point.lng,
+                            altitude: device.latest_accurate_device_point.altitude,
+                            drive_status: device.latest_accurate_device_point.device_state.drive_status
+                        })
+                    }
                 }).catch(err => {
                 if (enableLoading) {
                     this.loading = false
