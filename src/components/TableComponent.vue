@@ -3,13 +3,17 @@
         <table class="table">
             <thead>
             <tr>
-                <th v-for="column in data.columns" :key="column.id">{{ column.name }}</th>
+                <th v-for="column in data.columns" :key="column.id">
+                    <component v-if="column.dynamicHeader" :is="column.headerComponent" @callback="data.callback">
+                    </component>
+                    <span v-else>{{ column.name }}</span>
+                </th>
             </tr>
             </thead>
             <tbody>
             <tr v-for="row in data.rows" :key="row[data.key]" @click="rowClicked(row)">
                 <td v-for="column in data.columns" :key="column.id">
-                    <component v-if="column.dynamic" :is="column.component" :row="row">
+                    <component v-if="column.dynamicRow" :is="column.component" :row="row">
                     </component>
                     <span v-else>
                       {{ row[column.id] }}

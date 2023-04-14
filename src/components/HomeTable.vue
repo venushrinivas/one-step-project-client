@@ -50,47 +50,47 @@ export default {
                     {
                         name: TextConstants.DEVICE_ID,
                         id: "device_id",
-                        dynamic: false
+                        dynamicRow: false
                     },
                     {
                         name: TextConstants.DISPLAY_NAME,
                         id: "display_name",
-                        dynamic: false
+                        dynamicRow: false
                     },
                     {
                         name: TextConstants.ACTIVE_STATE,
                         id: "active_state",
-                        dynamic: false
+                        dynamicRow: false
                     },
                     {
                         name: TextConstants.ONLINE,
                         id: "online",
-                        dynamic: false
+                        dynamicRow: false
                     },
                     {
                         name: TextConstants.LATITUDE,
                         id: "lat",
-                        dynamic: false
+                        dynamicRow: false
                     },
                     {
                         name: TextConstants.LONGITUDE,
                         id: "lng",
-                        dynamic: false
+                        dynamicRow: false
                     },
                     {
                         name: TextConstants.ALTITUDE,
                         id: "altitude",
-                        dynamic: false
+                        dynamicRow: false
                     },
                     {
                         name: TextConstants.DRIVE_STATUS,
                         id: "drive_status",
-                        dynamic: false
+                        dynamicRow: false
                     },
                     {
                         name: TextConstants.ICON,
                         id: "image",
-                        dynamic: true,
+                        dynamicRow: true,
                         component: DeviceIconRaw
                     },
                 ],

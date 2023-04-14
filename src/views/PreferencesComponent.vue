@@ -61,7 +61,7 @@
                 </div>
             </div>
             <label class="col-form-label col-sm-2 pt-0 fw-bold">{{ TextConstants.EDIT_DEVICE_PREFERENCES }}</label>
-            <div class="table-responsive devices-table">
+            <div class="table-responsive">
                 <table class="table">
                     <thead>
                     <tr>
