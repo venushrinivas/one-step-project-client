@@ -1,8 +1,8 @@
 <template>
     <div class="d-flex justify-content-between">
-            <span class="d-flex align-items-center">
-                {{ TextConstants.CLICK_ROW_TEXT }}
-            </span>
+        <span class="d-flex align-items-center">
+            {{ TextConstants.CLICK_ROW_TEXT }}
+        </span>
         <div>
             <button v-if="pagination.previousPage" type="button" class="btn btn-primary m-1"
                     @click="pagination.navigate(pagination.pageNumber - 1)">{{ TextConstants.PREVIOUS_PAGE }}
@@ -20,6 +20,7 @@ import TableComponent from "@/components/TableComponent.vue";
 import TextConstants from "../constants/TextConstants";
 import DeviceIcon from "@/components/DeviceIcon.vue";
 import {markRaw} from "vue";
+
 const DeviceIconRaw = markRaw(DeviceIcon)
 export default {
     name: "HomeTable",
@@ -32,10 +33,10 @@ export default {
         pagination: {
             type: Object
         },
-        tableData:{
+        tableData: {
             type: Array,
         },
-        deviceRowClicked:{
+        deviceRowClicked: {
             type: Function
         }
     },
@@ -98,7 +99,7 @@ export default {
         }
     },
     watch: {
-        tableData: function(newTableData) {
+        tableData: function (newTableData) {
             this.tableComponentData.rows = newTableData;
         }
     }

@@ -12,7 +12,7 @@
         <button v-if="reset" type="button" class="btn btn-primary m-1" @click="resetZoom">
             {{ TextConstants.RESET_ZOOM }}
         </button>
-        <GoogleMap :api-key="apiKey" class="map" :center="center"
+        <GoogleMap :api-key="apiKey" class="map pb-3" :center="center"
                    :zoom="zoom">
             <Marker v-for="device in devices.devices" :key="device.device_id"
                     :options="{ position: { lat: device.latest_accurate_device_point.lat, lng: device.latest_accurate_device_point.lng }, icon:  {url: getImageSource(device.image), scaledSize: {height: 20, width: 20}}}"/>
@@ -24,6 +24,7 @@
     width: 100%;
     height: 100%;
 }
+
 .container-fluid {
     padding-top: 10vh;
 }
@@ -50,7 +51,7 @@ export default {
         return {
             loading: false,
             devices: {},
-            tableData:[],
+            tableData: [],
             apiKey: process.env.VUE_APP_GOOGLE_API_KEY,
             intervalId: null,
             center: {lat: 37.0902, lng: -95.7129},
