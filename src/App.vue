@@ -50,7 +50,6 @@ export default {
     width: 250px;
     height: 45px;
 }
-
 html,
 .app,
 body,
@@ -70,5 +69,11 @@ body,
     .navbar-expand-md.navbar-expanded {
         height: 10%;
     }
+}
+.loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 </style>

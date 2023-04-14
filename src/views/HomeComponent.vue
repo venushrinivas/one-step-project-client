@@ -20,17 +20,10 @@
     </div>
 </template>
 <style scoped>
-.loader {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .map {
     width: 100%;
     height: 100%;
 }
-
 .container-fluid {
     padding-top: 10vh;
 }

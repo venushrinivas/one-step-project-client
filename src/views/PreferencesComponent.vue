@@ -106,12 +106,6 @@
 </template>
 
 <style scoped>
-.loader {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .container {
     padding-top: 10vh;
 }
