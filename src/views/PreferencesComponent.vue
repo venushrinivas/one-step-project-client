@@ -82,14 +82,7 @@
                         <td>
                             <input v-model="device.hidden" class="form-check-input" type="checkbox">
                         </td>
-                        <td class="device-icon" v-if="!device.editing">
-                            <img :src="getImageSource(device.image)" :alt="device.image">
-                            <button @click="setEditMode(device)">{{ TextConstants.EDIT }}</button>
-                        </td>
-                        <td class="device-icon" v-else>
-                            <input type="file" ref="fileInput" @change="handleFileUpload(device)"/>
-                            <button @click.prevent="saveFile(device)">{{ TextConstants.SAVE }}</button>
-                        </td>
+                        <EditDeviceIcon :device="device"/>
                     </tr>
                     </tbody>
                 </table>
@@ -119,14 +112,6 @@
     width: 50%;
 }
 
-.device-icon {
-    width: 25%;
-}
-
-.device-icon img {
-    width: 20px;
-}
-
 .box {
     display: flex;
     flex-flow: column;
@@ -152,14 +137,15 @@
 <script>
 import axios from "axios";
 import URLConstants from "@/constants/URLConstants";
-import {getAlertObject, getImageSource} from "@/util/commons";
+import {getAlertObject} from "@/util/commons";
 import TextConstants from "../constants/TextConstants";
 import AlertComponent from "@/components/AlertComponent.vue";
 import EmptyState from "@/components/EmptyState.vue";
+import EditDeviceIcon from "@/components/EditDeviceIcon.vue";
 
 export default {
     name: 'PreferencesComponent',
-    components: {EmptyState, AlertComponent},
+    components: {EditDeviceIcon, EmptyState, AlertComponent},
     data() {
         return {
             preferences: {},
@@ -202,7 +188,6 @@ export default {
         },
     },
     methods: {
-        getImageSource,
         fetchData() {
             this.loading = true
             axios.get(URLConstants.PREFERENCES_URL)
@@ -223,30 +208,6 @@ export default {
                 this.alert = getAlertObject("danger", error, true, 2000)
             })
         },
-        setEditMode(device) {
-            device.editing = true
-        },
-        handleFileUpload(device) {
-            if (this.$refs.fileInput[0].files && this.$refs.fileInput[0].files.length > 0) {
-                device.file = this.$refs.fileInput[0].files[0]
-            }
-        },
-        async saveFile(device) {
-            if (device.file) {
-                const formData = new FormData()
-                formData.append('file', device.file)
-                let response = await axios.post(URLConstants.UPLOAD_URL + device.device_id, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-                if (response.status === 200) {
-                    device.image = response.data.message
-                }
-            }
-            device.file = undefined
-            device.editing = false
-        }
     },
     mounted() {
         this.fetchData();
