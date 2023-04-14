@@ -217,16 +217,16 @@ export default {
                     this.preferences = response.data
                 }).catch(error => {
                 this.loading = false
-                this.alert = getAlertObject("danger", error, true)
+                this.alert = getAlertObject("danger", error, true, 2000)
             })
         },
         save() {
             axios.post(URLConstants.PREFERENCES_URL, "data=" + JSON.stringify(this.preferences)).then(response => {
                 if (response.status === 200) {
-                    this.alert = getAlertObject("success", response.data.message, true)
+                    this.alert = getAlertObject("success", response.data.message, true, 2000)
                 }
             }).catch(error => {
-                this.alert = getAlertObject("danger", error, true)
+                this.alert = getAlertObject("danger", error, true, 2000)
             })
         },
         setEditMode(device) {

@@ -1,7 +1,7 @@
 <template>
     <div id="alert" ref="alert" :class="alertClass" role="alert">
         {{ alert.message }}
-        <button @click="$emit('close')" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button @click="close" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 </template>
 
@@ -13,11 +13,31 @@ export default {
             type: Object
         },
     },
+    data() {
+        return {
+            intervalId: null,
+        }
+    },
+    mounted() {
+        if(this.alert.autoCloseDelay) {
+            this.intervalId = setTimeout(() => {
+                this.$emit('close')
+            }, this.alert.autoCloseDelay)
+        }
+    },
     computed: {
         alertClass() {
             return `alert alert-${this.alert.type} alert-dismissible fade show`
         }
     },
+    methods: {
+        close() {
+            if(this.intervalId != null) {
+                clearTimeout(this.intervalId)
+            }
+            this.$emit('close')
+        }
+    }
 }
 </script>
 <style scoped>

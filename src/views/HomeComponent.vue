@@ -156,7 +156,7 @@ export default {
                 if (enableLoading) {
                     this.loading = false
                 }
-                this.alert = getAlertObject("danger", err, true);
+                this.alert = getAlertObject("danger", err, true, 2000);
             })
         },
         deviceRowClicked(device) {

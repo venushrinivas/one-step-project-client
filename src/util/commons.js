@@ -1,10 +1,11 @@
 export const serverPath = process.env.VUE_APP_SERVER_URL
 
-export function getAlertObject(type, message, show) {
+export function getAlertObject(type, message, show, autoCloseDelay) {
     return {
         type: type,
         message: message,
-        show: show
+        show: show,
+        autoCloseDelay: autoCloseDelay
     }
 }
 
