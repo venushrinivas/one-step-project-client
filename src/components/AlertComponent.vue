@@ -19,7 +19,7 @@ export default {
         }
     },
     mounted() {
-        if(this.alert.autoCloseDelay) {
+        if (this.alert.autoCloseDelay) {
             this.intervalId = setTimeout(() => {
                 this.$emit('close')
             }, this.alert.autoCloseDelay)
@@ -32,7 +32,7 @@ export default {
     },
     methods: {
         close() {
-            if(this.intervalId != null) {
+            if (this.intervalId != null) {
                 clearTimeout(this.intervalId)
             }
             this.$emit('close')

@@ -1,7 +1,7 @@
 <template>
-  <div class="empty-state d-flex justify-content-center align-items-center">
-      {{message}}
-  </div>
+    <div class="empty-state d-flex justify-content-center align-items-center">
+        {{ message }}
+    </div>
 </template>
 
 <script>

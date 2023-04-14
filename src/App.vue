@@ -1,5 +1,6 @@
 <template>
-    <nav class="navbar navbar-height navbar-expand-md navbar-light bg-light fixed-top" :class="{ 'navbar-expanded': navOpen }">
+    <nav class="navbar navbar-height navbar-expand-md navbar-light bg-light fixed-top"
+         :class="{ 'navbar-expanded': navOpen }">
         <div class="container-fluid">
             <router-link class="navbar-brand" to="/">
                 <img width="250px" height="45px" class="one-step-logo" alt="OneStepGps Logo" id="logo-mark"
@@ -60,9 +61,11 @@ body,
 .navbar-height {
     height: 10%;
 }
+
 .navbar-expand-md.navbar-expanded {
     height: 20%;
 }
+
 @media (min-width: 768px) {
     .navbar-expand-md.navbar-expanded {
         height: 10%;
