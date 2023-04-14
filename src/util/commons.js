@@ -1,18 +1,11 @@
 export const serverPath = process.env.VUE_APP_SERVER_URL
 
-export function showAlertMessage(type, message, ref) {
-    if (type === "success") {
-        ref.classList.remove("alert-danger")
-        ref.classList.add("alert-success")
-    } else {
-        ref.classList.add("alert-danger")
-        ref.classList.remove("alert-success")
+export function getAlertObject(type, message, show) {
+    return {
+        type: type,
+        message: message,
+        show: show
     }
-    ref.classList.remove("d-none")
-    ref.innerText = message;
-    setTimeout(() => {
-        ref.classList.add("d-none")
-    }, 2000);
 }
 
 export function getImageSource(imagePath) {

@@ -1,17 +1,17 @@
 <template>
-    <div class="container">
-        <div id="alert" ref="alert" class="alert d-none alert-success alert-dismissible fade show" role="alert">
-            {{ TextConstants.ALERT_SUCCESS }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="loader" v-if="loading">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">{{ TextConstants.LOADING }}</span>
         </div>
-        <h1>{{ TextConstants.PREFERENCES }}</h1>
-        <hr/>
-        <div class="loader" v-if="loading">
-            <div class="spinner-border text-primary" role="status">
-                <span class="sr-only">{{ TextConstants.LOADING }}</span>
-            </div>
+    </div>
+    <div v-else class="container box">
+        <AlertComponent v-if="alert.show" :alert="alert" @close="alert.show = false"/>
+        <div class="header">
+            <h1>{{ TextConstants.PREFERENCES }}</h1>
+            <hr/>
         </div>
-        <form v-else>
+
+        <form class="content">
             <div class="mb-3 row">
                 <label class="col-sm-2 col-form-label">
                     {{ TextConstants.SORT_COLUMN }}</label>
@@ -93,10 +93,15 @@
                     </tr>
                     </tbody>
                 </table>
+                <span v-if="filteredDevices.length === 0">
+                    <EmptyState :message="TextConstants.NO_DEVICE_AVAILABLE"/>
+                </span>
             </div>
             <br/>
-            <button v-on:click="save" type="button" class="btn btn-primary">{{ TextConstants.SAVE }}</button>
         </form>
+        <div class="footer">
+            <button v-on:click="save" type="button" class="btn btn-primary">{{ TextConstants.SAVE }}</button>
+        </div>
     </div>
 </template>
 
@@ -107,8 +112,8 @@
     justify-content: center;
 }
 
-.devices-table {
-    height: 30vh;
+.container {
+    padding-top: 10vh;
 }
 
 .display-name {
@@ -127,23 +132,51 @@
 .device-icon img {
     width: 20px;
 }
+
+.box {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.header {
+    flex: 0 1 auto;
+}
+
+.content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+    overflow-y: auto;
+}
+
+.footer {
+    flex: 0 1 40px;
+}
 </style>
 
 <script>
 import axios from "axios";
 import URLConstants from "@/constants/URLConstants";
-import {getImageSource, showAlertMessage} from "@/util/commons";
+import {getAlertObject, getImageSource} from "@/util/commons";
 import TextConstants from "../constants/TextConstants";
+import AlertComponent from "@/components/AlertComponent.vue";
+import EmptyState from "@/components/EmptyState.vue";
 
 export default {
     name: 'PreferencesComponent',
-    components: {},
+    components: {EmptyState, AlertComponent},
     data() {
         return {
             preferences: {},
             loading: false,
             showAlert: false,
             searchTerm: '',
+            alert: {
+                type: "",
+                message: "",
+                show: false
+            }
         }
     },
     computed: {
@@ -184,16 +217,16 @@ export default {
                     this.preferences = response.data
                 }).catch(error => {
                 this.loading = false
-                showAlertMessage("danger", error, this.$refs.alert)
+                this.alert = getAlertObject("danger", error, true)
             })
         },
         save() {
             axios.post(URLConstants.PREFERENCES_URL, "data=" + JSON.stringify(this.preferences)).then(response => {
                 if (response.status === 200) {
-                    showAlertMessage("success", response.data.message, this.$refs.alert)
+                    this.alert = getAlertObject("success", response.data.message, true)
                 }
             }).catch(error => {
-                showAlertMessage("danger", error, this.$refs.alert)
+                this.alert = getAlertObject("danger", error, true)
             })
         },
         setEditMode(device) {
